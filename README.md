@@ -1,3 +1,13 @@
+## Grupo
+
+- IAGO DINIZ - RM553776
+- ENZZO MONTEIRO - RM552616
+- LUCAS EDUARDO GARCIA - RM554070
+- ENZO FIGUEIREDO - RM554272
+- FELIPE - RM554259
+
+---
+
 # API de Reservas de Salas Corporativas
 
 > CP1 — Arquitetura Orientada a Serviço | FIAP - 3ESPS - 2026 | Profa. Damiana Costa
@@ -166,16 +176,6 @@ api-reservas/
 ├── .gitignore
 └── README.md
 ```
-
----
-
-## Grupo
-
-- Nome do Aluno 1 — RM: XXXXX
-- Nome do Aluno 2 — RM: XXXXX
-- Nome do Aluno 3 — RM: XXXXX
-- Nome do Aluno 4 — RM: XXXXX
-- Nome do Aluno 5 — RM: XXXXX
 
 ---
 
