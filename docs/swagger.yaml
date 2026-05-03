@@ -1,0 +1,234 @@
+openapi: 3.0.0
+info:
+  title: API de Reservas de Salas Corporativas
+  description: API REST para sistema de reservas de salas corporativas (FIAP - CP1)
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api
+    description: Servidor Local
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Sala:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        capacidade:
+          type: integer
+        localizacao:
+          type: string
+        status:
+          type: string
+          enum: [ATIVA, INATIVA]
+    Reserva:
+      type: object
+      properties:
+        id:
+          type: integer
+        sala_id:
+          type: integer
+        nome_solicitante:
+          type: string
+        email:
+          type: string
+        data:
+          type: string
+          format: date
+        horario_inicio:
+          type: string
+          format: time
+        horario_fim:
+          type: string
+          format: time
+        finalidade:
+          type: string
+        status:
+          type: string
+          enum: [ATIVA, CANCELADA]
+    Error:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+paths:
+  /auth/login:
+    post:
+      summary: Autenticação para obter token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: admin
+                password:
+                  type: string
+                  example: admin
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '401':
+          description: Credenciais inválidas
+  /salas:
+    get:
+      summary: Listar todas as salas
+      responses:
+        '200':
+          description: Lista de salas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sala'
+    post:
+      summary: Cadastrar nova sala
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                capacidade:
+                  type: integer
+                localizacao:
+                  type: string
+                status:
+                  type: string
+                  enum: [ATIVA, INATIVA]
+      responses:
+        '201':
+          description: Sala criada
+        '400':
+          description: Erro de validação
+        '401':
+          description: Não autorizado
+  /salas/{id}:
+    get:
+      summary: Buscar sala por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados da sala
+        '404':
+          description: Sala não encontrada
+  /reservas:
+    get:
+      summary: Listar todas as reservas
+      responses:
+        '200':
+          description: Lista de reservas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reserva'
+    post:
+      summary: Criar nova reserva
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sala_id:
+                  type: integer
+                nome_solicitante:
+                  type: string
+                email:
+                  type: string
+                data:
+                  type: string
+                  example: "2026-04-10"
+                horario_inicio:
+                  type: string
+                  example: "10:00"
+                horario_fim:
+                  type: string
+                  example: "12:00"
+                finalidade:
+                  type: string
+      responses:
+        '201':
+          description: Reserva criada
+        '400':
+          description: Erro de validação
+        '401':
+          description: Não autorizado
+        '404':
+          description: Sala não encontrada
+        '409':
+          description: Conflito de horário
+  /reservas/{id}:
+    get:
+      summary: Buscar reserva por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados da reserva
+        '404':
+          description: Reserva não encontrada
+    delete:
+      summary: Cancelar reserva
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Reserva cancelada
+        '400':
+          description: Reserva já cancelada
+        '401':
+          description: Não autorizado
+        '404':
+          description: Reserva não encontrada

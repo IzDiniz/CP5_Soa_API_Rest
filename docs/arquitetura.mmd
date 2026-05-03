@@ -1,0 +1,36 @@
+graph TD
+    Cliente["🖥️ Cliente\n(Postman / Front-end)"]
+
+    subgraph API["API REST - Node.js + Express"]
+        Auth["🔐 Middleware de Autenticação\n(JWT)"]
+        Router["📡 Router\n(Routes)"]
+
+        subgraph Controllers["Controllers"]
+            SC["SalaController"]
+            RC["ReservaController"]
+        end
+
+        subgraph Models["Models (Acesso a Dados)"]
+            SM["Sala Model"]
+            RM["Reserva Model"]
+        end
+
+        EH["⚠️ Error Handler\n(Middleware Global)"]
+    end
+
+    DB[("🗄️ Banco de Dados\nSQLite")]
+    Swagger["📚 Swagger UI\n/api-docs"]
+
+    Cliente -->|"HTTP Request"| Router
+    Router -->|"Rotas protegidas"| Auth
+    Auth -->|"Token válido"| Controllers
+    Router -->|"Rotas públicas"| Controllers
+    SC --> SM
+    RC --> RM
+    RC --> SM
+    SM --> DB
+    RM --> DB
+    Controllers -->|"Erro"| EH
+    EH -->|"Resposta padronizada"| Cliente
+    Controllers -->|"Resposta JSON"| Cliente
+    Cliente --> Swagger
